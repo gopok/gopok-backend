@@ -14,3 +14,7 @@ Register registers the controller
 */
 func (*UsersController) Register(app *core.Application) {
 }
+
+func init() {
+	core.ControllersToRegister.PushBack(&UsersController{})
+}

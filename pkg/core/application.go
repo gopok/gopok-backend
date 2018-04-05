@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -44,6 +45,7 @@ func (app *Application) Run() {
 
 	for c := ControllersToRegister.Front(); c != nil; c = c.Next() {
 		c.Value.(Controller).Register(app)
+		log.Printf("Registered controller %s", reflect.TypeOf(c.Value).String())
 	}
 	app.Router.PathPrefix("/").HandlerFunc(app.notFoundHandler)
 	app.Router.Use(loggingMiddleware)
