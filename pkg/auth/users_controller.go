@@ -1,8 +1,6 @@
 package auth
 
-import (
-	"github.com/alufers/fw/pkg/core"
-)
+import "github.com/gopok/gopok-backend/pkg/core"
 
 /*
 UsersController handles actions with user administration.

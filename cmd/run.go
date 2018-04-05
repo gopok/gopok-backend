@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "github.com/alufers/fw/pkg/auth"
-	"github.com/alufers/fw/pkg/core"
+	_ "github.com/gopok/gopok-backend/pkg/auth"
+	"github.com/gopok/gopok-backend/pkg/core"
 )
 
 func main() {
