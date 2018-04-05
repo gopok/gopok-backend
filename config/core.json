@@ -1,3 +1,4 @@
 {
-    "HttpPort": 3002
+    "HttpPort": 3002,
+    "MongoURL": "mongodb://localhost/gopok"
 }

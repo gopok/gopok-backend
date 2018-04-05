@@ -8,4 +8,5 @@ type CoreConfiguration struct {
 		HTTPPort to know where to listen
 	*/
 	HTTPPort int16
+	MongoURL string
 }
