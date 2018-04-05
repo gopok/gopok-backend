@@ -47,7 +47,7 @@ func (rr *RestRequest) finalize() {
 
 type restHandler func(r *RestRequest) interface{}
 
-func wrapRest(handler restHandler) func(w http.ResponseWriter, r *http.Request) {
+func WrapRest(handler restHandler) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rr := &RestRequest{r, w, 200}
 		defer rr.finalize()
