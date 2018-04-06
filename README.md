@@ -11,5 +11,5 @@ gopok
 1. Install [dep](https://golang.github.io/dep/docs/installation.html)
 2. Run `dep ensure` (to download all libraries)
 3. Run `go run cmd/run.go`
-4. Done! 
+4. Done! :)
 
