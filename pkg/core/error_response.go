@@ -13,9 +13,7 @@ func (e ErrorResponse) HTTPCode() int {
 }
 
 
-type HttpError interface {
-	HTTPCode() int
-}
+
 
 func NewErrorResponse(message string, code int) ErrorResponse {
 	return ErrorResponse{code, message}
