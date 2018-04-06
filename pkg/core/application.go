@@ -25,7 +25,7 @@ Application is the main struct used to start the app and load all other parts.
 type Application struct {
 	Config *CoreConfiguration
 	Router *mux.Router
-	Db     *mgo.Session
+	Db     *mgo.Database
 }
 
 /*
@@ -53,11 +53,13 @@ func (app *Application) Run() {
 	app.Router.Use(loggingMiddleware)
 	var dbError error
 	log.Info("Connecting to database")
-	app.Db, dbError = mgo.Dial(app.Config.MongoURL)
+	sess, dbError := mgo.Dial(app.Config.MongoURL)
 	if dbError != nil {
 		log.Fatal("Failed to connect to database: ", dbError)
 		return
 	}
+
+	app.Db = sess.DB("") // get DB specified in the mongo url (https://godoc.org/gopkg.in/mgo.v2#Session.DB)
 
 	log.Info("Starting to listen")
 	httpErr := app.initHTTP()
