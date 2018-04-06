@@ -27,10 +27,13 @@ func (uc *UsersController) Register(app *core.Application) {
 }
 
 func (uc *UsersController) postUser(r *core.RestRequest) interface{} {
-	var u user
-	r.DecodeJSON(&u)
+
 	var allData map[string]string
 	r.DecodeJSON(&allData)
+	u := &User{
+		Username: allData["username"],
+		Email:    allData["email"],
+	}
 	u.HashPassword(allData["password"])
 
 	validationError := u.Validate()
@@ -49,7 +52,7 @@ func (uc *UsersController) postUser(r *core.RestRequest) interface{} {
 
 func (uc *UsersController) getUserByID(r *core.RestRequest) interface{} {
 	userID := mux.Vars(r.OriginalRequest)["id"]
-	var u user
+	var u User
 	if bson.IsObjectIdHex(userID) {
 		err := uc.app.Db.C("users").FindId(bson.ObjectIdHex(userID)).One(&u)
 		if err != nil {

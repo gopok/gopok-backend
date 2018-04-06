@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"github.com/gopok/gopok-backend/pkg/generator"
 )
@@ -7,3 +8,4 @@ import (
 func main() {
 	generator.Run()
 }
+*/

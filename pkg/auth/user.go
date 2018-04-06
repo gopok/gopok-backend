@@ -9,14 +9,17 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type user struct {
+/*
+User is a model of... a user.
+*/
+type User struct {
 	ID       bson.ObjectId `json:"id" bson:"_id,omitempty"`
 	Username string        `json:"username" bson:"username"`
 	Password string        `json:"-" bson:"password"`
 	Email    string        `json:"email" bson:"email"`
 }
 
-func (u *user) HashPassword(password string) error {
+func (u *User) HashPassword(password string) error {
 
 	rawHash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
@@ -29,7 +32,7 @@ func (u *user) HashPassword(password string) error {
 var usernameRegexp = regexp.MustCompile("^([A-Za-z0-9_]){3,20}$")
 var emailRegexp = regexp.MustCompile("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$)")
 
-func (u *user) Validate() core.ValidationError {
+func (u *User) Validate() core.ValidationError {
 	if !usernameRegexp.Match([]byte(u.Username)) {
 		return core.NewValidationError("Invalid username", "username", "auth.user")
 	}

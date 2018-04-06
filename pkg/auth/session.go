@@ -9,8 +9,8 @@ import (
 
 type session struct {
 	ID        bson.ObjectId `json:"id" bson:"_id,omitempty"`
+	UserID    bson.ObjectId `json:"userID" bson:"userID"`
 	Token     string        `json:"token" bson:"token"`
-	UserID    string        `json:"userID" bson:"userID"`
 	CreatedOn time.Time     `json:"createdOn" bson:"createdOn"`
 	ExpiresOn time.Time     `json:"expiresOn" bson:"expiresOn"`
 	Active    bool          `json:"active" bson:"active"`
