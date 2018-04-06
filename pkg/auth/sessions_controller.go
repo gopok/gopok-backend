@@ -41,10 +41,7 @@ func (sc *SessionsController) login(r *core.RestRequest) interface{} {
 		"username": ld.Username,
 	}).One(user)
 	if findErr != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(ld.Password)) != nil {
-		r.SetCode(400)
-		return core.ErrorResponse{Code: 400,
-			Message: "Invalid username or password.",
-		}
+		return core.NewErrorResponse("Invalid username or password.", 400)
 	}
 	sess := &session{
 		ID:        bson.NewObjectId(),
@@ -57,11 +54,8 @@ func (sc *SessionsController) login(r *core.RestRequest) interface{} {
 	sess.AssignToken()
 	insertErr := sc.app.Db.C("sessions").Insert(sess)
 	if insertErr != nil {
-		r.SetCode(500)
-		return core.ErrorResponse{
-			Code:    500,
-			Message: insertErr.Error(),
-		}
+		return core.NewErrorResponse(insertErr.Error(), 500)
+
 	}
 	return sess
 }

@@ -49,7 +49,7 @@ func (app *Application) Run() {
 		c.Value.(Controller).Register(app)
 		log.Printf("Registered controller %s", reflect.TypeOf(c.Value).String())
 	}
-	app.Router.PathPrefix("/").HandlerFunc(app.notFoundHandler)
+	app.Router.PathPrefix("/").HandlerFunc(WrapRest(app.notFoundHandler))
 	app.Router.Use(loggingMiddleware)
 	var dbError error
 	log.Info("Connecting to database")
@@ -71,11 +71,8 @@ func (app *Application) Run() {
 
 }
 
-func (app *Application) notFoundHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(404)
-	jsonData, _ := json.Marshal(map[string]interface{}{"message": "Not found", "code": 404})
-	w.Write(jsonData)
+func (app *Application) notFoundHandler(r *RestRequest) interface{} {
+	return NewErrorResponse("Not found.", 404)
 }
 
 func (app *Application) loadConfig() error {

@@ -55,6 +55,7 @@ func WrapRest(handler restHandler) func(w http.ResponseWriter, r *http.Request) 
 		rr := &RestRequest{r, w, 200}
 		rr.Header().Set("Content-type", "application/json")
 		data := handler(rr)
+
 		rawJSON, err := json.Marshal(data)
 		if err != nil {
 			errorJSON, _ := json.Marshal(map[string]string{
@@ -65,6 +66,11 @@ func WrapRest(handler restHandler) func(w http.ResponseWriter, r *http.Request) 
 			rr.finalize()
 			w.Write(errorJSON)
 			return
+		}
+
+		switch v := data.(type) {
+		case HttpError:
+			rr.SetCode(v.HTTPCode())
 		}
 		rr.finalize()
 		w.Write(rawJSON)

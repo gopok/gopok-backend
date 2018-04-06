@@ -8,7 +8,7 @@ import (
 ValidationError is created when a model is invalid.
 */
 type ValidationError interface {
-	Error() string
+	Message() string
 	Field() string
 	Model() string
 }
@@ -17,9 +17,10 @@ type simpleValidationError struct {
 	message string
 	field   string
 	model   string
+	code    int
 }
 
-func (e simpleValidationError) Error() string {
+func (e simpleValidationError) Message() string {
 	return e.message
 }
 
@@ -29,6 +30,10 @@ func (e simpleValidationError) Field() string {
 
 func (e simpleValidationError) Model() string {
 	return e.model
+}
+
+func (e simpleValidationError) HTTPCode() int {
+	return e.code
 }
 
 func (e simpleValidationError) MarshalJSON() ([]byte, error) {
@@ -43,5 +48,5 @@ func (e simpleValidationError) MarshalJSON() ([]byte, error) {
 NewValidationError Creates a new simpleValidationError with basic info.
 */
 func NewValidationError(message, field, model string) ValidationError {
-	return simpleValidationError{message, field, model}
+	return simpleValidationError{message, field, model, 400}
 }

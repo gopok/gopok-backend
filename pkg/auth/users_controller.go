@@ -38,14 +38,12 @@ func (uc *UsersController) postUser(r *core.RestRequest) interface{} {
 
 	validationError := u.Validate()
 	if validationError != nil {
-		r.SetCode(400)
 		return validationError
 	}
 	u.ID = bson.NewObjectId()
 	err := uc.app.Db.C("users").Insert(&u)
 	if err != nil {
-		r.SetCode(500)
-		return core.ErrorResponse{Code: 500, Message: err.Error()}
+		return core.NewErrorResponse(err.Error(), 500)
 	}
 	return u
 }
@@ -56,12 +54,10 @@ func (uc *UsersController) getUserByID(r *core.RestRequest) interface{} {
 	if bson.IsObjectIdHex(userID) {
 		err := uc.app.Db.C("users").FindId(bson.ObjectIdHex(userID)).One(&u)
 		if err != nil {
-			r.SetCode(500)
-			return core.ErrorResponse{Code: 500, Message: err.Error()}
+			return core.NewErrorResponse(err.Error(), 500)
 		}
 	} else {
-		r.SetCode(400)
-		return core.ErrorResponse{Code: 400, Message: "User not found"}
+		return core.NewErrorResponse("User not found", 400)
 	}
 	return u
 }
