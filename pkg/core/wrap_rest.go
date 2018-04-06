@@ -47,10 +47,12 @@ func (rr *RestRequest) finalize() {
 
 type restHandler func(r *RestRequest) interface{}
 
+/*
+WrapRest simplifies working with JSON requests and responses in routes.
+*/
 func WrapRest(handler restHandler) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rr := &RestRequest{r, w, 200}
-		defer rr.finalize()
 		rr.Header().Set("Content-type", "application/json")
 		data := handler(rr)
 		rawJSON, err := json.Marshal(data)
@@ -60,9 +62,11 @@ func WrapRest(handler restHandler) func(w http.ResponseWriter, r *http.Request) 
 			})
 			rr.SetCode(500)
 			rr.Header().Set("Content-type", "application/json")
+			rr.finalize()
 			w.Write(errorJSON)
 			return
 		}
+		rr.finalize()
 		w.Write(rawJSON)
 		return
 
