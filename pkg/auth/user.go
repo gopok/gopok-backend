@@ -19,6 +19,9 @@ type User struct {
 	Email    string        `json:"email" bson:"email"`
 }
 
+/*
+HashPassword takes a cleartext password and sets the Password field with a hashed version.
+*/
 func (u *User) HashPassword(password string) error {
 
 	rawHash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
@@ -32,6 +35,11 @@ func (u *User) HashPassword(password string) error {
 var usernameRegexp = regexp.MustCompile("^([A-Za-z0-9_]){3,20}$")
 var emailRegexp = regexp.MustCompile("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$)")
 
+/*
+Validate checks if all fields of the user conform to the rules.
+Currently checks if username is alphanumeric (and _) and is between 3 and 20 characters.
+Also validates the email.
+*/
 func (u *User) Validate() core.ValidationError {
 	if !usernameRegexp.Match([]byte(u.Username)) {
 		return core.NewValidationError("Invalid username", "username", "auth.user")
