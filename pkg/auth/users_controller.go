@@ -22,6 +22,7 @@ func (uc *UsersController) Register(app *core.Application) {
 	uc.app = app
 	uc.usersRouter = app.Router.PathPrefix("/api/auth/users").Subrouter()
 	uc.usersRouter.HandleFunc("", core.WrapRest(uc.postUser)).Methods("POST")
+	uc.usersRouter.HandleFunc("/index/{id}", core.WrapRest(uc.getUserById)).Methods("GET")
 
 }
 
@@ -41,7 +42,23 @@ func (uc *UsersController) postUser(r *core.RestRequest) interface{} {
 	err := uc.app.Db.C("users").Insert(&u)
 	if err != nil {
 		r.SetCode(500)
-		return err.Error()
+		return core.ErrorResponse{Code:500, Message:err.Error()}
+	}
+	return u
+}
+
+func (uc *UsersController) getUserById(r *core.RestRequest) interface{} {
+	userId := mux.Vars(r.OriginalRequest)["id"]
+	var u user
+	if bson.IsObjectIdHex(userId) {
+		err := uc.app.Db.C("users").FindId(bson.ObjectIdHex(userId)).One(&u)
+		if err != nil {
+			r.SetCode(500)
+			return core.ErrorResponse{Code:500, Message:err.Error()}
+		}
+	} else {
+		r.SetCode(400)
+		return core.ErrorResponse{Code:400, Message:"User not found"}
 	}
 	return u
 }
