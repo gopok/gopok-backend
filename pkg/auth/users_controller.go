@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/gorilla/mux"
+	"gopkg.in/mgo.v2/bson"
 
 	"github.com/gopok/gopok-backend/pkg/core"
 )
@@ -29,8 +30,15 @@ func (uc *UsersController) postUser(r *core.RestRequest) interface{} {
 	r.DecodeJSON(&u)
 	var allData map[string]string
 	r.DecodeJSON(&allData)
-	u.hashPassword(allData["password"])
-	err := uc.app.Db.C("users").Insert(u)
+	u.HashPassword(allData["password"])
+
+	validationError := u.Validate()
+	if validationError != nil {
+		r.SetCode(400)
+		return validationError
+	}
+	u.ID = bson.NewObjectId()
+	err := uc.app.Db.C("users").Insert(&u)
 	if err != nil {
 		r.SetCode(500)
 		return err.Error()
