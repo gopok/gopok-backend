@@ -42,6 +42,15 @@ func (app *Application) Run() {
 	log.Info("Loaded core configuration")
 	log.Info("Initializing router")
 	app.initRouter()
+	log.Info("Connecting to database")
+	var dbError error
+	sess, dbError := mgo.Dial(app.Config.MongoURL)
+	if dbError != nil {
+		log.Fatal("Failed to connect to database: ", dbError)
+		return
+	}
+
+	app.Db = sess.DB("") // get DB specified in the mongo url (https://godoc.org/gopkg.in/mgo.v2#Session.DB)
 
 	// register controllers
 
@@ -51,15 +60,6 @@ func (app *Application) Run() {
 	}
 	app.Router.PathPrefix("/").HandlerFunc(WrapRest(app.notFoundHandler))
 	app.Router.Use(loggingMiddleware)
-	var dbError error
-	log.Info("Connecting to database")
-	sess, dbError := mgo.Dial(app.Config.MongoURL)
-	if dbError != nil {
-		log.Fatal("Failed to connect to database: ", dbError)
-		return
-	}
-
-	app.Db = sess.DB("") // get DB specified in the mongo url (https://godoc.org/gopkg.in/mgo.v2#Session.DB)
 
 	log.Info("Starting to listen")
 	httpErr := app.initHTTP()
