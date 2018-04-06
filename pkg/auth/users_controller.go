@@ -1,10 +1,11 @@
 package auth
 
 import (
-	"github.com/gorilla/mux"
-	"gopkg.in/mgo.v2/bson"
-
 	"github.com/gopok/gopok-backend/pkg/core"
+	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 /*
@@ -23,6 +24,15 @@ func (uc *UsersController) Register(app *core.Application) {
 	uc.usersRouter = app.Router.PathPrefix("/api/auth/users").Subrouter()
 	uc.usersRouter.HandleFunc("", core.WrapRest(uc.postUser)).Methods("POST")
 	uc.usersRouter.HandleFunc("/index/{id}", core.WrapRest(uc.getUserByID)).Methods("GET")
+
+	indexErr := app.Db.C("users").EnsureIndex(mgo.Index{
+		Key:    []string{"username"},
+		Unique: true,
+	})
+
+	if indexErr != nil {
+		log.Panicf("Failed to create unique sername index in users controller: %v", indexErr)
+	}
 
 }
 
