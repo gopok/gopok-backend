@@ -35,6 +35,7 @@ func TestCheckUserMiddleware(t *testing.T) {
 		MongoURL: "mongodb://localhost/go_test_TestCheckUserMiddleware",
 	}
 	app.Prepare()
+	defer app.Db.DropDatabase() // cleanup
 	uc := UsersController{}
 	uc.Register(app)
 	sc := SessionsController{}
