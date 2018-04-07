@@ -31,7 +31,7 @@ func (uc *UsersController) Register(app *core.Application) {
 	})
 
 	if indexErr != nil {
-		log.Panicf("Failed to create unique sername index in users controller: %v", indexErr)
+		log.Panicf("Failed to create unique username index in users controller: %v", indexErr)
 	}
 
 }
