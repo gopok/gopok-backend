@@ -39,7 +39,10 @@ func (sc *SessionsController) Register(app *core.Application) {
 
 func (sc *SessionsController) login(r *core.RestRequest) interface{} {
 	ld := &loginData{}
-	r.DecodeJSON(ld)
+	jsonErr := r.DecodeJSON(ld)
+	if jsonErr != nil {
+		return core.NewErrorResponse("invalid JSON request: "+jsonErr.Error(), 400)
+	}
 	user := &User{}
 	findErr := sc.app.Db.C("users").Find(bson.M{
 		"username": ld.Username,
