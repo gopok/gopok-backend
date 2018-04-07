@@ -202,3 +202,23 @@ Example response:
 	]
 }
 ```
+
+#### `GET /api/blog/posts/{id}`
+
+Returns the post with `{id}`.
+
+Example response:
+
+```json
+{
+	"author": {
+		"id": "5ac7bf2b1f43a64efbcadd53",
+		"username": "test",
+		"email": "srabada@jgfgfjgf.pl"
+	},
+	"authorID": "5ac7bf2b1f43a64efbcadd53",
+	"content": "Nazywam się Edward Maxwell i popieram kandydaturę smroota na prezydenta tego kraju!",
+	"createdOn": "2018-04-07T19:49:44.295+02:00",
+	"id": "5ac904b81f43a64eeb9b2a92"
+}
+```
