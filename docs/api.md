@@ -222,3 +222,29 @@ Example response:
 	"id": "5ac904b81f43a64eeb9b2a92"
 }
 ```
+
+#### `POST /api/blog/posts/{id}/comments` :closed_lock_with_key:
+
+Creates comment for post with id `{id}`. Requires authentication.
+
+Required body keys:
+
+* `content` Content string (3-1000 characters)
+
+Example request body:
+
+```json
+{
+  "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+}
+```
+
+Example response:
+
+```json
+{
+  "id": "5ac7bf2e1f43a64efbcadd54",
+  "authorID": "5ac7bf2b1f43a64efbcadd53",
+  "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+}
+```

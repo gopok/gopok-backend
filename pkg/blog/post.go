@@ -14,6 +14,7 @@ type Post struct {
 	ID        bson.ObjectId `json:"id" structs:"id" bson:"_id,omitempty"`
 	AuthorID  bson.ObjectId `json:"authorID" structs:"authorID" bson:"authorID,omitempty"`
 	Content   string        `json:"content" structs:"content" bson:"content"`
+	Comments  []Comment     `json:"comments" structs:"comments" bson:"comments"`
 	CreatedOn time.Time     `json:"createdOn" structs:"createdOn" bson:"createdOn"`
 }
 

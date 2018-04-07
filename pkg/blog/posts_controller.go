@@ -27,6 +27,7 @@ func (pc *PostsController) Register(app *core.Application) {
 	pc.app = app
 	pc.postsController = app.Router.PathPrefix("/api/blog/posts").Subrouter()
 	pc.postsController.Handle("", auth.CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(pc.addPost)))).Methods("POST")
+	pc.postsController.Handle("/{id}/comments", auth.CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(pc.addComment)))).Methods("POST")
 	pc.postsController.HandleFunc("/new", core.WrapRest(pc.getNewPosts)).Methods("GET")
 	pc.postsController.HandleFunc("/{id}", core.WrapRest(pc.getPostByID)).Methods("GET")
 }
@@ -41,6 +42,7 @@ func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
 	p := &Post{
 		Content:  allData["content"],
 		AuthorID: user.ID,
+		Comments: []Comment{},
 	}
 	validationError := p.Validate()
 	if validationError != nil {
@@ -60,6 +62,12 @@ func (pc *PostsController) attachAuthorToPost(p *Post) map[string]interface{} {
 	author := &auth.User{}
 	pc.app.Db.C("users").FindId(p.AuthorID).One(author)
 	pp["author"] = author
+
+	var populatedComments []map[string]interface{}
+	for _, c := range p.Comments {
+		populatedComments = append(populatedComments, pc.attachAuthorToComment(&c))
+	}
+	pp["comments"] = populatedComments
 	return pp
 }
 
