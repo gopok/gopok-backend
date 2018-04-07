@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -64,7 +63,6 @@ func CheckUserMiddleware(app *core.Application) func(next http.Handler) http.Han
 				w.Write(jsonErr)
 				return
 			}
-			fmt.Println(session.UserID.Hex())
 			user := &User{}
 			userFindErr := app.Db.C("users").FindId(session.UserID).One(user)
 			if userFindErr != nil {
