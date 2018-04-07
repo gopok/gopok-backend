@@ -23,7 +23,7 @@ func (uc *UsersController) Register(app *core.Application) {
 	uc.app = app
 	uc.usersRouter = app.Router.PathPrefix("/api/auth/users").Subrouter()
 	uc.usersRouter.HandleFunc("", core.WrapRest(uc.postUser)).Methods("POST")
-	uc.usersRouter.HandleFunc("/index/{id}", core.WrapRest(uc.getUserByID)).Methods("GET")
+	uc.usersRouter.HandleFunc("/{id}", core.WrapRest(uc.getUserByID)).Methods("GET")
 
 	indexErr := app.Db.C("users").EnsureIndex(mgo.Index{
 		Key:    []string{"username"},
