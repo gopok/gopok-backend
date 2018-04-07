@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -37,7 +38,7 @@ func extractSessionToken(r *http.Request) (string, error) {
 /*
 CheckUserMiddleware validates the session token passed in the Authorization header, aborts the request if it is invalid. When a session is found it attaches the user to the context.
 */
-func CheckUserMiddleware(app core.Application) func(next http.Handler) http.Handler {
+func CheckUserMiddleware(app *core.Application) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			sessToken, extractionErr := extractSessionToken(r)
@@ -63,10 +64,9 @@ func CheckUserMiddleware(app core.Application) func(next http.Handler) http.Hand
 				w.Write(jsonErr)
 				return
 			}
+			fmt.Println(session.UserID.Hex())
 			user := &User{}
-			userFindErr := app.Db.C("sessions").Find(bson.M{
-				"_id": session.UserID,
-			}).One(user)
+			userFindErr := app.Db.C("users").FindId(session.UserID).One(user)
 			if userFindErr != nil {
 				w.WriteHeader(401)
 				jsonErr, _ := json.Marshal(core.NewErrorResponse("Failed to find user: "+userFindErr.Error(), 401))

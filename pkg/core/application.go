@@ -30,16 +30,10 @@ type Application struct {
 }
 
 /*
-Prepare loads configuration and connects to the database, without attaching controllers and listening. Useful for testing
+Prepare initializes the router and connects to the database, without attaching controllers and listening. Useful for testing
 */
 func (app *Application) Prepare() {
-	log.Info("Loading core configuration")
-	configErr := app.loadConfig()
-	if configErr != nil {
-		log.Fatal("Failed to load core configuration: ", configErr)
-		return
-	}
-	log.Info("Loaded core configuration")
+
 	log.Info("Initializing router")
 	app.initRouter()
 	log.Info("Connecting to database")
@@ -58,6 +52,13 @@ Run starts the application.
 */
 func (app *Application) Run() {
 	log.Info("Starting application...")
+	log.Info("Loading core configuration")
+	configErr := app.loadConfig()
+	if configErr != nil {
+		log.Fatal("Failed to load core configuration: ", configErr)
+		return
+	}
+	log.Info("Loaded core configuration")
 	app.Prepare()
 
 	// register controllers

@@ -1,15 +1,12 @@
 package auth
 
 import (
-	"encoding/json"
 	"net/http"
+	"net/http/httptest"
 	"testing"
-)
 
-func marshalJSONNoError(data interface{}) []byte {
-	out, _ := json.Marshal(data)
-	return out
-}
+	"github.com/gopok/gopok-backend/pkg/core"
+)
 
 func TestExtractsTokenFromRequest(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/test", nil)
@@ -31,22 +28,40 @@ func TestExtractsTokenFromRequest(t *testing.T) {
 }
 
 func TestCheckUserMiddleware(t *testing.T) {
-	/*userUsername := "test_user_" + string(time.Now().UnixNano())
 
 	app := &core.Application{}
-	app.DbOverride = "go_test_db_TestCheckUserMiddleware"
+	app.Config = &core.CoreConfiguration{
+		HTTPPort: 3002,
+		MongoURL: "mongodb://localhost/go_test_TestCheckUserMiddleware",
+	}
 	app.Prepare()
-
-	createUserReq, _ := http.NewRequest("POST", "/api/auth/users", bytes.NewBuffer(marshalJSONNoError(map[string]string{
-		"username": userUsername,
-		"password": "test",
-		"email":    "test@test.pl",
-	})))
 	uc := UsersController{}
 	uc.Register(app)
+	sc := SessionsController{}
+	sc.Register(app)
+
+	username := createTestUser(app)
+	sessionToken := loginWithTestUser(app, username)
 	rr := httptest.NewRecorder()
-	app.Router.ServeHTTP(rr, createUserReq)
-	if rr.Code != 200 {
-		t.Error("Failed to create user ", rr.Body.String())
-	}*/
+
+	authedRequest, err := http.NewRequest("GET", "/abvfyhdhfd", nil)
+	if err != nil {
+		panic(err)
+	}
+	authedRequest.Header.Set("Authorization", "Bearer "+sessionToken)
+
+	mid := CheckUserMiddleware(app)
+	var called bool
+	mid(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		called = true
+		if r.Context().Value(UserContextKey).(*User).Username != username {
+			t.Error("Users mismatch")
+			t.Fail()
+			return
+		}
+	})).ServeHTTP(rr, authedRequest)
+	if !called {
+		t.Error("Handler wasn't called by CheckUserMiddleware")
+	}
+
 }
