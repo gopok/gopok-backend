@@ -1,11 +1,13 @@
 package blog
 
 import (
-"github.com/gopok/gopok-backend/pkg/core"
-"github.com/gopok/gopok-backend/pkg/auth"
-"github.com/gorilla/mux"
-"gopkg.in/mgo.v2/bson"
-"net/http"
+	"net/http"
+	"time"
+
+	"github.com/gopok/gopok-backend/pkg/auth"
+	"github.com/gopok/gopok-backend/pkg/core"
+	"github.com/gorilla/mux"
+	"gopkg.in/mgo.v2/bson"
 )
 
 /*
@@ -28,16 +30,20 @@ func (pc *PostsController) Register(app *core.Application) {
 func (uc *PostsController) addPost(r *core.RestRequest) interface{} {
 	user := r.OriginalRequest.Context().Value(auth.UserContextKey).(*auth.User)
 	var allData map[string]string
-	r.DecodeJSON(&allData)
+	jsonErr := r.DecodeJSON(&allData)
+	if jsonErr != nil {
+		return core.NewErrorResponse("invalid JSON request: "+jsonErr.Error(), 400)
+	}
 	p := &Post{
-		Content:    allData["content"],
-		AuthorID:   user.ID,
+		Content:  allData["content"],
+		AuthorID: user.ID,
 	}
 	validationError := p.Validate()
 	if validationError != nil {
 		return validationError
 	}
 	p.ID = bson.NewObjectId()
+	p.CreatedOn = time.Now()
 	err := uc.app.Db.C("posts").Insert(&p)
 	if err != nil {
 		return core.NewErrorResponse(err.Error(), 500)

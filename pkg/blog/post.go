@@ -1,17 +1,20 @@
 package blog
 
 import (
-	"gopkg.in/mgo.v2/bson"
+	"time"
+
 	"github.com/gopok/gopok-backend/pkg/core"
+	"gopkg.in/mgo.v2/bson"
 )
 
 /*
 Post is a model of... a post.
 */
 type Post struct {
-	ID       bson.ObjectId `json:"id" bson:"_id,omitempty"`
-	AuthorID bson.ObjectId `json:"authorID" bson:"authorID,omitempty"`
-	Content  string        `json:"content" bson:"content"`
+	ID        bson.ObjectId `json:"id" bson:"_id,omitempty"`
+	AuthorID  bson.ObjectId `json:"authorID" bson:"authorID,omitempty"`
+	Content   string        `json:"content" bson:"content"`
+	CreatedOn time.Time     `json:"createdOn" bson:"createdOn"`
 }
 
 /*
