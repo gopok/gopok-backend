@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -30,6 +31,9 @@ func (sc *SessionsController) Register(app *core.Application) {
 	sc.app = app
 	sc.sessionsRouter = app.Router.PathPrefix("/api/auth/sessions").Subrouter()
 	sc.sessionsRouter.HandleFunc("/login", core.WrapRest(sc.login)).Methods("POST")
+
+	logoutStack := CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(sc.logout)))
+	sc.sessionsRouter.Handle("/logout", logoutStack).Methods("POST")
 
 }
 
