@@ -17,7 +17,7 @@ type UsersController struct {
 }
 
 /*
-Register registers the controller
+Register registers the controller (do not confuse with user sign up).
 */
 func (uc *UsersController) Register(app *core.Application) {
 	uc.app = app
@@ -39,7 +39,10 @@ func (uc *UsersController) Register(app *core.Application) {
 func (uc *UsersController) postUser(r *core.RestRequest) interface{} {
 
 	var allData map[string]string
-	r.DecodeJSON(&allData)
+	jsonErr := r.DecodeJSON(&allData)
+	if jsonErr != nil {
+		return core.NewErrorResponse("invalid JSON request: "+jsonErr.Error(), 400)
+	}
 	u := &User{
 		Username: allData["username"],
 		Email:    allData["email"],
