@@ -23,16 +23,16 @@ var ControllersToRegister = list.New()
 Application is the main struct used to start the app and load all other parts.
 */
 type Application struct {
-	Config *CoreConfiguration
-	Router *mux.Router
-	Db     *mgo.Database
+	Config     *CoreConfiguration
+	Router     *mux.Router
+	Db         *mgo.Database
+	DbOverride string
 }
 
 /*
-Run starts the application.
+Prepare loads configuration and connects to the database, without attaching controllers and listening. Useful for testing
 */
-func (app *Application) Run() {
-	log.Info("Starting application...")
+func (app *Application) Prepare() {
 	log.Info("Loading core configuration")
 	configErr := app.loadConfig()
 	if configErr != nil {
@@ -50,7 +50,15 @@ func (app *Application) Run() {
 		return
 	}
 
-	app.Db = sess.DB("") // get DB specified in the mongo url (https://godoc.org/gopkg.in/mgo.v2#Session.DB)
+	app.Db = sess.DB(app.DbOverride) // get DB specified in DbOverride or the mongo url (https://godoc.org/gopkg.in/mgo.v2#Session.DB)
+}
+
+/*
+Run starts the application.
+*/
+func (app *Application) Run() {
+	log.Info("Starting application...")
+	app.Prepare()
 
 	// register controllers
 
@@ -65,7 +73,7 @@ func (app *Application) Run() {
 	httpErr := app.initHTTP()
 
 	if httpErr != nil {
-		log.Fatal("Failed to bind http listener: ", configErr)
+		log.Fatal("Failed to bind http listener: ", httpErr)
 		return
 	}
 
