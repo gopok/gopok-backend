@@ -70,7 +70,7 @@ func (uc *UsersController) getUserByID(r *core.RestRequest) interface{} {
 			return core.NewErrorResponse(err.Error(), 500)
 		}
 	} else {
-		return core.NewErrorResponse("User not found", 400)
+		return core.NewErrorResponse("not found", 404)
 	}
 	return u
 }

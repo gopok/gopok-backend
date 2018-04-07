@@ -28,6 +28,7 @@ func (pc *PostsController) Register(app *core.Application) {
 	pc.postsController = app.Router.PathPrefix("/api/blog/posts").Subrouter()
 	pc.postsController.Handle("", auth.CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(pc.addPost)))).Methods("POST")
 	pc.postsController.HandleFunc("/new", core.WrapRest(pc.getNewPosts)).Methods("GET")
+	pc.postsController.HandleFunc("/{id}", core.WrapRest(pc.getPostByID)).Methods("GET")
 }
 
 func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
@@ -52,6 +53,14 @@ func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
 		return core.NewErrorResponse(err.Error(), 500)
 	}
 	return p
+}
+
+func (pc *PostsController) attachAuthorToPost(p *Post) map[string]interface{} {
+	pp := structs.Map(p)
+	author := &auth.User{}
+	pc.app.Db.C("users").FindId(p.AuthorID).One(author)
+	pp["author"] = author
+	return pp
 }
 
 func (pc *PostsController) getNewPosts(r *core.RestRequest) interface{} {
@@ -79,11 +88,8 @@ func (pc *PostsController) getNewPosts(r *core.RestRequest) interface{} {
 	var populatedPosts []map[string]interface{}
 
 	for _, p := range posts {
-		pp := structs.Map(p)
-		author := &auth.User{}
-		pc.app.Db.C("users").FindId(p.AuthorID).One(author)
-		pp["author"] = author
-		populatedPosts = append(populatedPosts, pp)
+
+		populatedPosts = append(populatedPosts, pc.attachAuthorToPost(&p))
 	}
 	lastPost := posts[len(posts)-1]
 
@@ -91,6 +97,22 @@ func (pc *PostsController) getNewPosts(r *core.RestRequest) interface{} {
 		"posts":      populatedPosts,
 		"nextCursor": strconv.FormatInt(lastPost.CreatedOn.UnixNano(), 10),
 	}
+}
+
+func (pc *PostsController) getPostByID(r *core.RestRequest) interface{} {
+	postID := mux.Vars(r.OriginalRequest)["id"]
+	post := &Post{}
+	if bson.IsObjectIdHex(postID) {
+
+		findErr := pc.app.Db.C("posts").FindId(bson.ObjectIdHex(postID)).One(post)
+		if findErr != nil {
+			return core.NewErrorResponse(findErr.Error(), 500)
+		}
+	} else {
+		return core.NewErrorResponse("not found", 404)
+	}
+
+	return pc.attachAuthorToPost(post)
 }
 
 func init() {
