@@ -27,7 +27,7 @@ func (pc *PostsController) Register(app *core.Application) {
 	pc.postsController.Handle("", auth.CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(pc.addPost)))).Methods("POST")
 }
 
-func (uc *PostsController) addPost(r *core.RestRequest) interface{} {
+func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
 	user := r.OriginalRequest.Context().Value(auth.UserContextKey).(*auth.User)
 	var allData map[string]string
 	jsonErr := r.DecodeJSON(&allData)
@@ -44,7 +44,7 @@ func (uc *PostsController) addPost(r *core.RestRequest) interface{} {
 	}
 	p.ID = bson.NewObjectId()
 	p.CreatedOn = time.Now()
-	err := uc.app.Db.C("posts").Insert(&p)
+	err := pc.app.Db.C("posts").Insert(&p)
 	if err != nil {
 		return core.NewErrorResponse(err.Error(), 500)
 	}
