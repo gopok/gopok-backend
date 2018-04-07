@@ -60,6 +60,20 @@ func (sc *SessionsController) login(r *core.RestRequest) interface{} {
 	return sess
 }
 
+func (sc *SessionsController) logout(r *core.RestRequest) interface{} {
+	sess := r.OriginalRequest.Context().Value(SessionContextKey).(*session)
+	sess.Active = false
+	sc.app.Db.C("sessions").Update(bson.M{
+		"_id": sess.ID,
+	}, bson.M{
+		"$set": bson.M{
+			"active": false,
+		},
+	})
+
+	return bson.M{}
+}
+
 func init() {
 	core.ControllersToRegister.PushBack(&SessionsController{})
 }
