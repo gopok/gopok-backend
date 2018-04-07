@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/gopok/gopok-backend/pkg/core"
+	"gopkg.in/mgo.v2/bson"
 )
 
 func TestCheckLogout(t *testing.T) {
@@ -13,7 +14,7 @@ func TestCheckLogout(t *testing.T) {
 	app := &core.Application{}
 	app.Config = &core.CoreConfiguration{
 		HTTPPort: 3002,
-		MongoURL: "mongodb://localhost/go_test_TestCheckUserMiddleware",
+		MongoURL: "mongodb://localhost/go_test_TestCheckLogout",
 	}
 	app.Prepare()
 	defer app.Db.DropDatabase() // cleanup
@@ -38,4 +39,11 @@ func TestCheckLogout(t *testing.T) {
 		panic(rr.Body.String())
 	}
 
+	sess := &session{}
+	app.Db.C("sessions").Find(bson.M{
+		"token": sessionToken,
+	}).One(sess)
+	if sess.Active {
+		t.Error("Session is still active after logout")
+	}
 }
