@@ -69,7 +69,7 @@ func WrapRest(handler restHandler) func(w http.ResponseWriter, r *http.Request) 
 		}
 
 		switch v := data.(type) {
-		case HttpError:
+		case HTTPError:
 			rr.SetCode(v.HTTPCode())
 		}
 		rr.finalize()

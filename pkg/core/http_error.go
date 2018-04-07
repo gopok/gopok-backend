@@ -1,8 +1,8 @@
 package core
 
 /*
-HttpError is a value that WrapRest can use to set a http code.
+HTTPError is a value that WrapRest can use to set a http code.
 */
-type HttpError interface {
+type HTTPError interface {
 	HTTPCode() int
 }
