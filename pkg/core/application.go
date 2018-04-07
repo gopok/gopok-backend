@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/mgo.v2"
 )
@@ -100,7 +101,7 @@ func (app *Application) initRouter() {
 	app.Router = mux.NewRouter()
 }
 func (app *Application) initHTTP() error {
-	err := http.ListenAndServe(":"+strconv.Itoa(int(app.Config.HTTPPort)), app.Router)
+	err := http.ListenAndServe(":"+strconv.Itoa(int(app.Config.HTTPPort)), cors.Default().Handler(app.Router))
 	if err != nil {
 		return errors.Wrap(err, "failed to listen http")
 	}
