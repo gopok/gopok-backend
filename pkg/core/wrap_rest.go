@@ -68,10 +68,11 @@ func WrapRest(handler restHandler) func(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 
-		switch v := data.(type) {
-		case HTTPError:
-			rr.SetCode(v.HTTPCode())
+		// check if returned value is a HTTPError, if yes then set the response code
+		if hc, ok := data.(HTTPError); ok {
+			rr.SetCode(hc.HTTPCode())
 		}
+
 		rr.finalize()
 		w.Write(rawJSON)
 		return
