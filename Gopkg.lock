@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/fatih/structs"
+  packages = ["."]
+  revision = "a720dfa8df582c51dee1b36feabb906bde1588bd"
+  version = "v1.0"
+
+[[projects]]
   name = "github.com/gorilla/context"
   packages = ["."]
   revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
@@ -71,6 +77,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "37a94e09311e2a59a083559806362eede15b4d7d490926fc7b6045a1753c7036"
+  inputs-digest = "aef365e08f58cf9a8c0e1cb299c220b57d55cdeb490c098ba130c1b035e83b8e"
   solver-name = "gps-cdcl"
   solver-version = 1

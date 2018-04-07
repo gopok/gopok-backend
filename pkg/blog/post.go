@@ -11,10 +11,10 @@ import (
 Post is a model of... a post.
 */
 type Post struct {
-	ID        bson.ObjectId `json:"id" bson:"_id,omitempty"`
-	AuthorID  bson.ObjectId `json:"authorID" bson:"authorID,omitempty"`
-	Content   string        `json:"content" bson:"content"`
-	CreatedOn time.Time     `json:"createdOn" bson:"createdOn"`
+	ID        bson.ObjectId `json:"id" structs:"id" bson:"_id,omitempty"`
+	AuthorID  bson.ObjectId `json:"authorID" structs:"authorID" bson:"authorID,omitempty"`
+	Content   string        `json:"content" structs:"content" bson:"content"`
+	CreatedOn time.Time     `json:"createdOn" structs:"createdOn" bson:"createdOn"`
 }
 
 /*

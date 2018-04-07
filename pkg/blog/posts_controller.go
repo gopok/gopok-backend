@@ -2,8 +2,10 @@ package blog
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
+	"github.com/fatih/structs"
 	"github.com/gopok/gopok-backend/pkg/auth"
 	"github.com/gopok/gopok-backend/pkg/core"
 	"github.com/gorilla/mux"
@@ -25,6 +27,7 @@ func (pc *PostsController) Register(app *core.Application) {
 	pc.app = app
 	pc.postsController = app.Router.PathPrefix("/api/blog/posts").Subrouter()
 	pc.postsController.Handle("", auth.CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(pc.addPost)))).Methods("POST")
+	pc.postsController.HandleFunc("/new", core.WrapRest(pc.getNewPosts)).Methods("GET")
 }
 
 func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
@@ -49,6 +52,45 @@ func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
 		return core.NewErrorResponse(err.Error(), 500)
 	}
 	return p
+}
+
+func (pc *PostsController) getNewPosts(r *core.RestRequest) interface{} {
+	posts := []Post{}
+	afterStr := r.OriginalRequest.URL.Query().Get("after")
+
+	var after time.Time
+	if afterStr == "" {
+		after = time.Now()
+	} else {
+		afterNum, parseErr := strconv.ParseInt(afterStr, 10, 64)
+		if parseErr != nil {
+			return core.NewErrorResponse("after should be a string convertable to int64", 400)
+		}
+		after = time.Unix(0, afterNum)
+	}
+	findAllErr := pc.app.Db.C("posts").Find(bson.M{
+		"createdOn": bson.M{
+			"$lt": after,
+		},
+	}).Sort("-createdOn").Limit(20).All(&posts)
+	if findAllErr != nil {
+		return core.NewErrorResponse(findAllErr.Error(), 500)
+	}
+	var populatedPosts []map[string]interface{}
+
+	for _, p := range posts {
+		pp := structs.Map(p)
+		author := &auth.User{}
+		pc.app.Db.C("users").FindId(p.AuthorID).One(author)
+		pp["author"] = author
+		populatedPosts = append(populatedPosts, pp)
+	}
+	lastPost := posts[len(posts)-1]
+
+	return map[string]interface{}{
+		"posts":      populatedPosts,
+		"nextCursor": strconv.FormatInt(lastPost.CreatedOn.UnixNano(), 10),
+	}
 }
 
 func init() {
