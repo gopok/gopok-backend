@@ -101,7 +101,7 @@ func (app *Application) initRouter() {
 	app.Router = mux.NewRouter()
 }
 func (app *Application) initHTTP() error {
-	err := http.ListenAndServe(":"+strconv.Itoa(int(app.Config.HTTPPort)), cors.Default().Handler(app.Router))
+	err := http.ListenAndServe(":"+strconv.Itoa(int(app.Config.HTTPPort)), cors.AllowAll().Handler(app.Router))
 	if err != nil {
 		return errors.Wrap(err, "failed to listen http")
 	}
