@@ -30,6 +30,7 @@ func (ses *Session) AssignToken() {
 	for i := range b {
 		b[i] = tokenRunes[rand.Intn(len(tokenRunes))]
 	}
+	ses.Token = string(b)
 }
 
 func init() {
