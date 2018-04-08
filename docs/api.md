@@ -266,3 +266,16 @@ Example response:
   "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 }
 ```
+
+#### `POST /api/blog/posts/{id}/upvote` :closed_lock_with_key:
+
+Upvotes post with id `{id}`. Requires authentication.
+
+Body content does not matter.
+
+### `POST /api/blog/posts/{id}/downvote` :closed_lock_with_key:
+
+Downvotes post with id `{id}`. Requires authentication.
+
+Body content does not matter.
+
