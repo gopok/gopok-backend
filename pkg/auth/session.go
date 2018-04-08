@@ -7,6 +7,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+/*
+Session identifies a logged in user by his token provided by the client.
+*/
 type Session struct {
 	ID        bson.ObjectId `json:"id" structs:"id" bson:"_id,omitempty"`
 	UserID    bson.ObjectId `json:"userID" structs:"userID" bson:"userID"`
@@ -27,7 +30,6 @@ func (ses *Session) AssignToken() {
 	for i := range b {
 		b[i] = tokenRunes[rand.Intn(len(tokenRunes))]
 	}
-	ses.Token = string(b)
 }
 
 func init() {
