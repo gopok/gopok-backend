@@ -99,11 +99,17 @@ func (pc *PostsController) getNewPosts(r *core.RestRequest) interface{} {
 
 		populatedPosts = append(populatedPosts, pc.attachAuthorToPost(&p))
 	}
-	lastPost := posts[len(posts)-1]
+	var nextCursor string
+	if len(posts) > 0 {
+
+		nextCursor = strconv.FormatInt(posts[len(posts)-1].CreatedOn.UnixNano(), 10)
+	} else {
+		nextCursor = "0"
+	}
 
 	return map[string]interface{}{
 		"posts":      populatedPosts,
-		"nextCursor": strconv.FormatInt(lastPost.CreatedOn.UnixNano(), 10),
+		"nextCursor": nextCursor,
 	}
 }
 
