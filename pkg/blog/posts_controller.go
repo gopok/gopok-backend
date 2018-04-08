@@ -30,6 +30,7 @@ func (pc *PostsController) Register(app *core.Application) {
 	pc.postsController.Handle("/{id}/comments", auth.CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(pc.addComment)))).Methods("POST")
 	pc.postsController.HandleFunc("/new", core.WrapRest(pc.getNewPosts)).Methods("GET")
 	pc.postsController.HandleFunc("/{id}", core.WrapRest(pc.getPostByID)).Methods("GET")
+	pc.postsController.Handle("/{id}/upvote", auth.CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(pc.upvotePost)))).Methods("POST")
 }
 
 func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
@@ -40,9 +41,11 @@ func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
 		return core.NewErrorResponse("invalid JSON request: "+jsonErr.Error(), 400)
 	}
 	p := &Post{
-		Content:  allData["content"],
-		AuthorID: user.ID,
-		Comments: []Comment{},
+		Content:    allData["content"],
+		AuthorID:   user.ID,
+		Comments:   []Comment{},
+		Downvoters: []bson.ObjectId{},
+		Upvoters:   []bson.ObjectId{},
 	}
 	validationError := p.Validate()
 	if validationError != nil {
@@ -54,10 +57,11 @@ func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
 	if err != nil {
 		return core.NewErrorResponse(err.Error(), 500)
 	}
-	return p
+	return pc.attachAuthorToPost(p)
 }
 
 func (pc *PostsController) attachAuthorToPost(p *Post) map[string]interface{} {
+
 	pp := structs.Map(p)
 	author := &auth.User{}
 	pc.app.Db.C("users").FindId(p.AuthorID).One(author)

@@ -11,11 +11,13 @@ import (
 Post is a model of... a post.
 */
 type Post struct {
-	ID        bson.ObjectId `json:"id" structs:"id" bson:"_id,omitempty"`
-	AuthorID  bson.ObjectId `json:"authorID" structs:"authorID" bson:"authorID,omitempty"`
-	Content   string        `json:"content" structs:"content" bson:"content"`
-	Comments  []Comment     `json:"comments" structs:"comments" bson:"comments"`
-	CreatedOn time.Time     `json:"createdOn" structs:"createdOn" bson:"createdOn"`
+	ID         bson.ObjectId   `json:"id" structs:"id" bson:"_id,omitempty"`
+	AuthorID   bson.ObjectId   `json:"authorID" structs:"authorID" bson:"authorID,omitempty"`
+	Content    string          `json:"content" structs:"content" bson:"content"`
+	Comments   []Comment       `json:"comments" structs:"comments" bson:"comments"`
+	CreatedOn  time.Time       `json:"createdOn" structs:"createdOn" bson:"createdOn"`
+	Upvoters   []bson.ObjectId `json:"upvoters" structs:"upvoters" bson:"upvoters"`
+	Downvoters []bson.ObjectId `json:"downvoters" structs:"downvoters" bson:"downvoters"`
 }
 
 /*
