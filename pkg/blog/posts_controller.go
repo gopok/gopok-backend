@@ -68,7 +68,7 @@ func (pc *PostsController) attachAuthorToPost(p *Post) map[string]interface{} {
 	pc.app.Db.C("users").FindId(p.AuthorID).One(author)
 	pp["author"] = author
 
-	var populatedComments []map[string]interface{}
+	populatedComments := make([]map[string]interface{}, 0)
 	for _, c := range p.Comments {
 		populatedComments = append(populatedComments, pc.attachAuthorToComment(&c))
 	}
@@ -98,7 +98,7 @@ func (pc *PostsController) getNewPosts(r *core.RestRequest) interface{} {
 	if findAllErr != nil {
 		return core.NewErrorResponse(findAllErr.Error(), 500)
 	}
-	var populatedPosts []map[string]interface{}
+	populatedPosts := make([]map[string]interface{}, 0)
 
 	for _, p := range posts {
 
