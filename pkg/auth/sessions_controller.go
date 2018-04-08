@@ -31,9 +31,8 @@ func (sc *SessionsController) Register(app *core.Application) {
 	sc.app = app
 	sc.sessionsRouter = app.Router.PathPrefix("/api/auth/sessions").Subrouter()
 	sc.sessionsRouter.HandleFunc("/login", core.WrapRest(sc.login)).Methods("POST")
-
-	logoutStack := CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(sc.logout)))
-	sc.sessionsRouter.Handle("/logout", logoutStack).Methods("POST")
+	sc.sessionsRouter.Handle("/current-user", CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(sc.getCurrentUser)))).Methods("GET")
+	sc.sessionsRouter.Handle("/logout", CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(sc.logout)))).Methods("POST")
 
 }
 
@@ -79,6 +78,11 @@ func (sc *SessionsController) logout(r *core.RestRequest) interface{} {
 	})
 
 	return bson.M{}
+}
+
+func (sc *SessionsController) getCurrentUser(r *core.RestRequest) interface{} {
+	user := r.OriginalRequest.Context().Value(UserContextKey).(*User)
+	return user
 }
 
 func init() {

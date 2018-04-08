@@ -129,6 +129,24 @@ Errors
 
 * `401` Authorization required
 
+#### `GET /api/auth/sessions/current-user`
+
+Returns the currently logged in user.
+
+Example response:
+
+```json
+{
+  "id": "5ac7bf2b1f43a64efbcadd53",
+  "username": "ktoniepracujetensmroot",
+  "email": "smroot@smroot.faith"
+}
+```
+
+Errors
+
+* `401` when there is no session token or it is invalid
+
 ### Blog
 
 #### `POST /api/blog/posts` :closed_lock_with_key:
