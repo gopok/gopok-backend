@@ -284,3 +284,15 @@ Downvotes post with id `{id}`. Requires authentication.
 
 Body content does not matter.
 
+#### `POST /api/blog/posts/{id}/comments/{commentID}/upvote` :closed_lock_with_key:
+
+Upvotes post's with id `{id}` comment with id `{commentId}`. Requires authentication.
+
+Body content does not matter.
+
+### `POST /api/blog/posts/{id}/comments/{commentID}/downvote` :closed_lock_with_key:
+
+Downvotes post's with id `{id}` comment with id `{commentId}`. Requires authentication.
+
+Body content does not matter.
+
