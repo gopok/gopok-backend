@@ -31,6 +31,7 @@ func (pc *PostsController) Register(app *core.Application) {
 	pc.postsController.HandleFunc("/new", core.WrapRest(pc.getNewPosts)).Methods("GET")
 	pc.postsController.HandleFunc("/{id}", core.WrapRest(pc.getPostByID)).Methods("GET")
 	pc.postsController.Handle("/{id}/upvote", auth.CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(pc.upvotePost)))).Methods("POST")
+	pc.postsController.Handle("/{id}/downvote", auth.CheckUserMiddleware(app)(http.HandlerFunc(core.WrapRest(pc.downvotePost)))).Methods("POST")
 }
 
 func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
