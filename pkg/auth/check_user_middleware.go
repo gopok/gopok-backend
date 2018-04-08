@@ -47,7 +47,7 @@ func CheckUserMiddleware(app *core.Application) func(next http.Handler) http.Han
 				w.Write(jsonErr)
 				return
 			}
-			session := &session{}
+			session := &Session{}
 			findErr := app.Db.C("sessions").Find(bson.M{
 				"token": sessToken,
 			}).One(session)

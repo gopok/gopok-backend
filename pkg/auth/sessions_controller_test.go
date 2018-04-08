@@ -39,7 +39,7 @@ func TestCheckLogout(t *testing.T) {
 		panic(rr.Body.String())
 	}
 
-	sess := &session{}
+	sess := &Session{}
 	app.Db.C("sessions").Find(bson.M{
 		"token": sessionToken,
 	}).One(sess)

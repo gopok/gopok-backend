@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/fatih/structs"
+
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2/bson"
@@ -49,7 +51,7 @@ func (sc *SessionsController) login(r *core.RestRequest) interface{} {
 	if findErr != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(ld.Password)) != nil {
 		return core.NewErrorResponse("Invalid username or password.", 401)
 	}
-	sess := &session{
+	sess := &Session{
 		ID:        bson.NewObjectId(),
 		UserID:    user.ID,
 		IPAddress: r.OriginalRequest.RemoteAddr,
@@ -61,13 +63,14 @@ func (sc *SessionsController) login(r *core.RestRequest) interface{} {
 	insertErr := sc.app.Db.C("sessions").Insert(sess)
 	if insertErr != nil {
 		return core.NewErrorResponse(insertErr.Error(), 500)
-
 	}
-	return sess
+	sessMap := structs.Map(&sess)
+	sessMap["user"] = user
+	return sessMap
 }
 
 func (sc *SessionsController) logout(r *core.RestRequest) interface{} {
-	sess := r.OriginalRequest.Context().Value(SessionContextKey).(*session)
+	sess := r.OriginalRequest.Context().Value(SessionContextKey).(*Session)
 	sess.Active = false
 	sc.app.Db.C("sessions").Update(bson.M{
 		"_id": sess.ID,

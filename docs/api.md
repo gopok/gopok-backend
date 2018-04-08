@@ -95,13 +95,18 @@ Example response:
 
 ```json
 {
-  "id": "5ac7bf2e1f43a64efbcadd54",
-  "userID": "5ac7bf2b1f43a64efbcadd53",
-  "token": "yRB6r3l8ip6cV6wUjEr3",
-  "createdOn": "2018-04-06T20:40:46.120991082+02:00",
-  "expiresOn": "2018-04-13T20:40:46.120991141+02:00",
-  "active": true,
-  "ipAddress": "127.0.0.1:59812"
+	"active": true,
+	"createdOn": "2018-04-08T19:38:09.97023346+02:00",
+	"expiresOn": "2018-04-15T19:38:09.970233514+02:00",
+	"id": "5aca53811f43a65757f13485",
+	"ipAddress": "127.0.0.1:36728",
+	"token": "kTYzEaI5TT1IZH5ZEA8J",
+	"user": {
+		"id": "5ac7bf2b1f43a64efbcadd53",
+		"username": "test",
+		"email": "srabada@jgfgfjgf.pl"
+	},
+	"userID": "5ac7bf2b1f43a64efbcadd53"
 }
 ```
 
