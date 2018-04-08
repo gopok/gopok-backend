@@ -29,7 +29,7 @@ func (u *Post) Validate() core.ValidationError {
 		return core.NewValidationError("Post content is too short", "content", "blog.post")
 	}
 
-	if len(u.Content) > 1000 {
+	if len(u.Content) > 3000 {
 		return core.NewValidationError("Post content is too long", "content", "blog.post")
 	}
 	return nil
