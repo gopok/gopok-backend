@@ -44,6 +44,7 @@ func (pc *PostsController) addPost(r *core.RestRequest) interface{} {
 		return core.NewErrorResponse("invalid JSON request: "+jsonErr.Error(), 400)
 	}
 	p := &Post{
+		Title: 		allData["title"]
 		Content:    allData["content"],
 		AuthorID:   user.ID,
 		Comments:   []Comment{},

@@ -13,6 +13,7 @@ Post is a model of... a post.
 type Post struct {
 	ID         bson.ObjectId   `json:"id" structs:"id" bson:"_id,omitempty"`
 	AuthorID   bson.ObjectId   `json:"authorID" structs:"authorID" bson:"authorID,omitempty"`
+	Title      string          `json:"title" structs:"title" bson:"title"`
 	Content    string          `json:"content" structs:"content" bson:"content"`
 	Comments   []Comment       `json:"comments" structs:"comments" bson:"comments"`
 	CreatedOn  time.Time       `json:"createdOn" structs:"createdOn" bson:"createdOn"`
