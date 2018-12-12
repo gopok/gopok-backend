@@ -41,7 +41,7 @@ Example response:
 ```json
 {
   "id": "5ac7bf2b1f43a64efbcadd53",
-  "username": "ktoniepracujetensmroot",
+  "username": "smroot",
   "email": "smroot@smroot.faith"
 }
 ```
