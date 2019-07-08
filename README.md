@@ -1,5 +1,7 @@
 # gopok-backend
-gopok
+A backend for a simple blogging site written in go. It uses MongoDB as its database.
+
+Please refernece the [API documentation](https://github.com/gopok/gopok-backend/blob/master/docs/api.md) for all supported features.
 
 # Installation :cd:
 
